@@ -15,7 +15,6 @@ YELLOW = "\033[33m"
 BLUE = "\033[34m"
 MAGENTA = "\033[35m"
 CYAN = "\033[36m"
-WHITE = "\033[37m"
 erroText = f"{RED}Erro:"
 
 # -- Execução principal --
@@ -134,7 +133,31 @@ def estadoComando(char, lista, tokens, linha, index):
             return estadoInicial(char, "", tokens, linha, index)
     
 def estadoOperador(char, lista, tokens, linha, index):
-    print('estadoOperador', char, lista, index)
+    printEstado("estadoOperador", char, lista, index, YELLOW)
+    # Checar divisão inteira
+    if lista == '/':
+        if char == '/':
+             tokens.append('//') 
+             printTokenConcluido(tokens)
+             return estadoInicial, ""
+        else:
+             # Caso não seja, salva divisao real
+             tokens.append('/')
+             printTokenConcluido(tokens)
+             return estadoInicial(char, "", tokens, linha, index)
+
+    if lista == "":
+        if char == '/':
+            # Chama recursivamente para checar divisão inteira
+            return estadoOperador, char
+            
+        # Demais operadores
+        if char in "+-*^%":
+            tokens.append(char)
+            printTokenConcluido(tokens)
+            return estadoInicial, ""
+
+    raise ValueError(f"Erro: erro lendo '{char}' ou lista '{lista}' indexado em {index}")
 
 def estadoParenteses(char, tokens, index):
     if len(tokens) == 0 and char == ')':
