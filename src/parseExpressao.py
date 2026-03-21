@@ -7,6 +7,23 @@
 
 from utils import addJson
 
+# -- Informações para Debug --
+RESET = "\033[0m"
+RED = "\033[31m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+BLUE = "\033[34m"
+MAGENTA = "\033[35m"
+CYAN = "\033[36m"
+WHITE = "\033[37m"
+erroText = f"{RED}Erro:"
+
+def printEstado(state_name, char, lista, index, color):
+    print(f"{color}[{state_name}] index={index} char={repr(char)} lista={repr(lista)}{RESET}")
+
+def printTokenConcluido(tokens):
+    print(f"{GREEN}lista concluida -> tokens: {tokens}{RESET}")
+
 def parseExpressao(linha, line_number=None):
     print(f'\n-- Processing line "{linha}"')
     global balance, qnt_operandos
@@ -30,8 +47,40 @@ def parseExpressao(linha, line_number=None):
 
     return estadoFinal(tokens, linha, line_number)
 
-def estadoInicial(char, lista, tokens, linha, index):
-    print('EstadoInicial', char, lista, index)
+def estadoInicial(char, lista, tokens, linha, index):        
+    printEstado("estadoInicial", char, lista, index, BLUE)
+    if char.isspace(): 
+        return estadoInicial, ""
+
+    if char == '(' or char == ')':
+        return estadoParenteses(char, tokens, index)
+
+    # Quando ponto, estadoNúmero que irá validar caracter
+    if char.isdigit() or char == '.':
+        return estadoNumero, char
+
+    # Verifica se menos é subtração ou negativo, checando proximo char
+    if char == '-':
+        prox = linha[index + 1] if index + 1 < len(linha) else ''
+        
+        if prox.isdigit():
+            return estadoNumero, char
+        else:
+            return estadoOperador(char, lista, tokens, linha, index)
+
+    # Tratamento de operadores. É esperado ter dois operandos antes do operador.
+    if char in "+*/^%":
+        global qnt_operandos
+        if qnt_operandos >= 2:
+            return estadoOperador(char, lista, tokens, linha, index)
+        else:
+            raise ValueError(f"{erroText} operador '{char}'. Esperado dois operandos antes do operador na posição {index}{RESET}")
+
+    # As letras formam os comandos especiais (RES) ou variveis de memória (MEM, X, Y)
+    if char.isalpha():
+        return estadoComando, char
+
+    raise ValueError(f"{erroText} caractere desconhecido ou não esperado '{char}' na posição {index}{RESET}")
 
 def estadoNumero(char, lista, tokens, linha, index):
     print('estadoNumero', char, lista, index)
