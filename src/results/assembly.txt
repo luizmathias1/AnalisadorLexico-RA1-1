@@ -14,7 +14,6 @@ main:
     MOV r0, #0x40000000
     VMSR FPEXC, r0
 
-
     // Carrega 3.0
     LDR r0, =num_0
     VLDR s0, [r0]
@@ -25,6 +24,18 @@ main:
 
     // Operação: +
     VADD.F32 s0, s0, s1
+
+    // Converte float para inteiro
+    VCVT.S32.F32 s0, s0
+    VMOV r0, s0
+
+    // Lookup 7 segmentos: r0 = seg7_table[r0]
+    LDR r1, =seg7_table
+    LDR r0, [r1, r0, LSL #2]
+
+    // Escreve no HEX0 (display mais à direita)
+    LDR r1, =0xFF200020
+    STR r0, [r1]
 
     // Carrega 10.0
     LDR r0, =num_2
@@ -37,6 +48,18 @@ main:
     // Operação: -
     VSUB.F32 s1, s1, s2
 
+    // Converte float para inteiro
+    VCVT.S32.F32 s1, s1
+    VMOV r0, s1
+
+    // Lookup 7 segmentos: r0 = seg7_table[r0]
+    LDR r1, =seg7_table
+    LDR r0, [r1, r0, LSL #2]
+
+    // Escreve no HEX0 (display mais à direita)
+    LDR r1, =0xFF200020
+    STR r0, [r1]
+
     // Carrega 6.0
     LDR r0, =num_4
     VLDR s2, [r0]
@@ -47,6 +70,18 @@ main:
 
     // Operação: *
     VMUL.F32 s2, s2, s3
+
+    // Converte float para inteiro
+    VCVT.S32.F32 s2, s2
+    VMOV r0, s2
+
+    // Lookup 7 segmentos: r0 = seg7_table[r0]
+    LDR r1, =seg7_table
+    LDR r0, [r1, r0, LSL #2]
+
+    // Escreve no HEX0 (display mais à direita)
+    LDR r1, =0xFF200020
+    STR r0, [r1]
 
     // Carrega 15.0
     LDR r0, =num_6
@@ -59,6 +94,18 @@ main:
     // Operação: /
     VDIV.F32 s3, s3, s4
 
+    // Converte float para inteiro
+    VCVT.S32.F32 s3, s3
+    VMOV r0, s3
+
+    // Lookup 7 segmentos: r0 = seg7_table[r0]
+    LDR r1, =seg7_table
+    LDR r0, [r1, r0, LSL #2]
+
+    // Escreve no HEX0 (display mais à direita)
+    LDR r1, =0xFF200020
+    STR r0, [r1]
+
     // Carrega 17.0
     LDR r0, =num_8
     VLDR s4, [r0]
@@ -68,6 +115,23 @@ main:
     VLDR s5, [r0]
 
     // Operação: %
+    VDIV.F32 s6, s4, s5
+    VCVT.S32.F32 s6, s6
+    VCVT.F32.S32 s6, s6
+    VMUL.F32 s6, s6, s5
+    VSUB.F32 s4, s4, s6
+
+    // Converte float para inteiro
+    VCVT.S32.F32 s4, s4
+    VMOV r0, s4
+
+    // Lookup 7 segmentos: r0 = seg7_table[r0]
+    LDR r1, =seg7_table
+    LDR r0, [r1, r0, LSL #2]
+
+    // Escreve no HEX0 (display mais à direita)
+    LDR r1, =0xFF200020
+    STR r0, [r1]
 
     // Carrega 2.0
     LDR r0, =num_10
@@ -78,66 +142,179 @@ main:
     VLDR s6, [r0]
 
     // Operação: ^
+    VCVT.S32.F32 s7, s6
+    VMOV r1, s7
+    LDR r2, =num_12
+    VLDR s7, [r2]
+pow_12_loop:
+    CMP r1, #0
+    BLE pow_12_end
+    VMUL.F32 s7, s7, s5
+    SUB r1, r1, #1
+    B pow_12_loop
+pow_12_end:
+    VMOV.F32 s5, s7
+
+    // Converte float para inteiro
+    VCVT.S32.F32 s5, s5
+    VMOV r0, s5
+
+    // Lookup 7 segmentos: r0 = seg7_table[r0]
+    LDR r1, =seg7_table
+    LDR r0, [r1, r0, LSL #2]
+
+    // Escreve no HEX0 (display mais à direita)
+    LDR r1, =0xFF200020
+    STR r0, [r1]
 
     // Carrega 100.0
-    LDR r0, =num_12
+    LDR r0, =num_13
     VLDR s6, [r0]
 
     // Carrega 1
-    LDR r0, =num_13
+    LDR r0, =num_14
     VLDR s7, [r0]
 
     // Carrega 2.0
-    LDR r0, =num_14
+    LDR r0, =num_15
     VLDR s8, [r0]
 
     // Operação: +
     VADD.F32 s7, s7, s8
 
+    // Converte float para inteiro
+    VCVT.S32.F32 s7, s7
+    VMOV r0, s7
+
+    // Lookup 7 segmentos: r0 = seg7_table[r0]
+    LDR r1, =seg7_table
+    LDR r0, [r1, r0, LSL #2]
+
+    // Escreve no HEX0 (display mais à direita)
+    LDR r1, =0xFF200020
+    STR r0, [r1]
+
     // Carrega 3.0
-    LDR r0, =num_15
+    LDR r0, =num_16
     VLDR s8, [r0]
 
     // Operação: -
     VSUB.F32 s7, s7, s8
 
+    // Converte float para inteiro
+    VCVT.S32.F32 s7, s7
+    VMOV r0, s7
+
+    // Lookup 7 segmentos: r0 = seg7_table[r0]
+    LDR r1, =seg7_table
+    LDR r0, [r1, r0, LSL #2]
+
+    // Escreve no HEX0 (display mais à direita)
+    LDR r1, =0xFF200020
+    STR r0, [r1]
+
     // Carrega 2
-    LDR r0, =num_16
+    LDR r0, =num_17
     VLDR s8, [r0]
 
     // Carrega 4.0
-    LDR r0, =num_17
+    LDR r0, =num_18
     VLDR s9, [r0]
 
     // Operação: *
     VMUL.F32 s8, s8, s9
 
+    // Converte float para inteiro
+    VCVT.S32.F32 s8, s8
+    VMOV r0, s8
+
+    // Lookup 7 segmentos: r0 = seg7_table[r0]
+    LDR r1, =seg7_table
+    LDR r0, [r1, r0, LSL #2]
+
+    // Escreve no HEX0 (display mais à direita)
+    LDR r1, =0xFF200020
+    STR r0, [r1]
+
     // Carrega 1
-    LDR r0, =num_18
+    LDR r0, =num_19
     VLDR s9, [r0]
 
     // Operação: /
     VDIV.F32 s8, s8, s9
 
+    // Converte float para inteiro
+    VCVT.S32.F32 s8, s8
+    VMOV r0, s8
+
+    // Lookup 7 segmentos: r0 = seg7_table[r0]
+    LDR r1, =seg7_table
+    LDR r0, [r1, r0, LSL #2]
+
+    // Escreve no HEX0 (display mais à direita)
+    LDR r1, =0xFF200020
+    STR r0, [r1]
+
     // Carrega 3
-    LDR r0, =num_19
+    LDR r0, =num_20
     VLDR s9, [r0]
 
     // Carrega 7.0
-    LDR r0, =num_20
-    VLDR s10, [r0]
-
-    // Operação: %
-
-    // Carrega 1
     LDR r0, =num_21
     VLDR s10, [r0]
 
-    // Carrega 3.0
+    // Operação: %
+    VDIV.F32 s11, s9, s10
+    VCVT.S32.F32 s11, s11
+    VCVT.F32.S32 s11, s11
+    VMUL.F32 s11, s11, s10
+    VSUB.F32 s9, s9, s11
+
+    // Converte float para inteiro
+    VCVT.S32.F32 s9, s9
+    VMOV r0, s9
+
+    // Lookup 7 segmentos: r0 = seg7_table[r0]
+    LDR r1, =seg7_table
+    LDR r0, [r1, r0, LSL #2]
+
+    // Escreve no HEX0 (display mais à direita)
+    LDR r1, =0xFF200020
+    STR r0, [r1]
+
+    // Carrega 1
     LDR r0, =num_22
+    VLDR s10, [r0]
+
+    // Carrega 3.0
+    LDR r0, =num_23
     VLDR s11, [r0]
 
     // Operação: ^
+    VCVT.S32.F32 s12, s11
+    VMOV r1, s12
+    LDR r2, =num_24
+    VLDR s12, [r2]
+pow_24_loop:
+    CMP r1, #0
+    BLE pow_24_end
+    VMUL.F32 s12, s12, s10
+    SUB r1, r1, #1
+    B pow_24_loop
+pow_24_end:
+    VMOV.F32 s10, s12
+
+    // Converte float para inteiro
+    VCVT.S32.F32 s10, s10
+    VMOV r0, s10
+
+    // Lookup 7 segmentos: r0 = seg7_table[r0]
+    LDR r1, =seg7_table
+    LDR r0, [r1, r0, LSL #2]
+
+    // Escreve no HEX0 (display mais à direita)
+    LDR r1, =0xFF200020
+    STR r0, [r1]
     // Fim da execucao
     BX LR
 
@@ -167,24 +344,40 @@ num_10:
 num_11:
     .float 10.0
 num_12:
-    .float 100.0
+    .float 1.0
 num_13:
-    .float 1
+    .float 100.0
 num_14:
-    .float 2.0
+    .float 1
 num_15:
-    .float 3.0
+    .float 2.0
 num_16:
-    .float 2
-num_17:
-    .float 4.0
-num_18:
-    .float 1
-num_19:
-    .float 3
-num_20:
-    .float 7.0
-num_21:
-    .float 1
-num_22:
     .float 3.0
+num_17:
+    .float 2
+num_18:
+    .float 4.0
+num_19:
+    .float 1
+num_20:
+    .float 3
+num_21:
+    .float 7.0
+num_22:
+    .float 1
+num_23:
+    .float 3.0
+num_24:
+    .float 1.0
+
+seg7_table:
+    .word 0x3F  // 0
+    .word 0x06  // 1
+    .word 0x5B  // 2
+    .word 0x4F  // 3
+    .word 0x66  // 4
+    .word 0x6D  // 5
+    .word 0x7D  // 6
+    .word 0x07  // 7
+    .word 0x7F  // 8
+    .word 0x6F  // 9
