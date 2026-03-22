@@ -10,7 +10,8 @@
 import sys
 import parseExpressao
 import executarExpressao
-from utils import lerArquivo, resetJson
+import gerarAssembly
+from utils import lerArquivo, resetFiles
 
 def main(argv=None):
     argv = argv if argv is not None else sys.argv
@@ -36,7 +37,9 @@ def main(argv=None):
             continue
     
     executarExpressao.executarExpressao()
+    gerarAssembly.gerarAssembly()
+
 
 if __name__ == "__main__":
-    resetJson() # Garantir que sempre começamos com um JSON vazio
+    resetFiles() # Garantir que sempre começamos com arquivos vazios
     main()

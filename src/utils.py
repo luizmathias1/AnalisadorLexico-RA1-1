@@ -13,12 +13,13 @@ def lerArquivo(arquivo):
 
     return formatado
 
-def resetJson():
+def resetFiles():
     output_path = os.path.join("results", "tokens.txt")
     os.makedirs(os.path.dirname(output_path), exist_ok=True)  # garante que 'results/' exista
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump({"entries": []}, f, ensure_ascii=False, indent=2)
-
+    with open(os.path.join("results", "assembly.txt"), "w", encoding="utf-8") as f:
+        f.write("")
 
 def ler_json():
     output_path = os.path.join("results", "tokens.txt")

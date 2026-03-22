@@ -1,0 +1,132 @@
+.syntax unified
+.arch armv7-a
+.fpu vfp
+.text
+.global main
+main:
+
+    // Carrega 3.0
+    LDR r0, =3.0
+    VMSR s0, r0
+
+    // Carrega 5.0
+    LDR r0, =5.0
+    VMSR s1, r0
+
+    // Operação: +
+    VADD.F32 s0, s0, s1
+
+    // Carrega 10.0
+    LDR r0, =10.0
+    VMSR s1, r0
+
+    // Carrega 4.0
+    LDR r0, =4.0
+    VMSR s2, r0
+
+    // Operação: -
+    VSUB.F32 s1, s1, s2
+
+    // Carrega 6.0
+    LDR r0, =6.0
+    VMSR s2, r0
+
+    // Carrega 7.0
+    LDR r0, =7.0
+    VMSR s3, r0
+
+    // Operação: *
+    VMUL.F32 s2, s2, s3
+
+    // Carrega 15.0
+    LDR r0, =15.0
+    VMSR s3, r0
+
+    // Carrega 3.0
+    LDR r0, =3.0
+    VMSR s4, r0
+
+    // Operação: /
+    VDIV.F32 s3, s3, s4
+
+    // Carrega 17.0
+    LDR r0, =17.0
+    VMSR s4, r0
+
+    // Carrega 5.0
+    LDR r0, =5.0
+    VMSR s5, r0
+
+    // Operação: %
+
+    // Carrega 2.0
+    LDR r0, =2.0
+    VMSR s5, r0
+
+    // Carrega 10.0
+    LDR r0, =10.0
+    VMSR s6, r0
+
+    // Operação: ^
+
+    // Carrega 100.0
+    LDR r0, =100.0
+    VMSR s6, r0
+
+    // Carrega 1
+    LDR r0, =1
+    VMSR s7, r0
+
+    // Carrega 2.0
+    LDR r0, =2.0
+    VMSR s8, r0
+
+    // Operação: +
+    VADD.F32 s7, s7, s8
+
+    // Carrega 3.0
+    LDR r0, =3.0
+    VMSR s8, r0
+
+    // Operação: -
+    VSUB.F32 s7, s7, s8
+
+    // Carrega 2
+    LDR r0, =2
+    VMSR s8, r0
+
+    // Carrega 4.0
+    LDR r0, =4.0
+    VMSR s9, r0
+
+    // Operação: *
+    VMUL.F32 s8, s8, s9
+
+    // Carrega 1
+    LDR r0, =1
+    VMSR s9, r0
+
+    // Operação: /
+    VDIV.F32 s8, s8, s9
+
+    // Carrega 3
+    LDR r0, =3
+    VMSR s9, r0
+
+    // Carrega 7.0
+    LDR r0, =7.0
+    VMSR s10, r0
+
+    // Operação: %
+
+    // Carrega 1
+    LDR r0, =1
+    VMSR s10, r0
+
+    // Carrega 3.0
+    LDR r0, =3.0
+    VMSR s11, r0
+
+    // Operação: ^
+    // Fim da execucao
+    BX LR
