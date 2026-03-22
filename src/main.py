@@ -40,5 +40,5 @@ def main(argv=None):
     exibirResultados.exibirResultados(resultados) 
 
 if __name__ == "__main__":
-    resetJson() # Garantir que sempre começamos com um JSON vazio
+    resetFiles() # Garantir que sempre começamos com arquivos vazios
     main()
