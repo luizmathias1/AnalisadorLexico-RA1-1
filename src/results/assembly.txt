@@ -172,25 +172,13 @@ main:
     LDR r1, =0xFF200020
     STR r0, [r1]
 
-    // Carrega 1
+    // Carrega 10.0
     LDR r0, =num_4
     VLDR s0, [r0]
 
-// -- Comando: (N RES) --
-    VCVT.S32.F32 s0, s0
-    VMOV r1, s0
-    LDR r2, =2
-    SUB r1, r2, r1
-    CMP r1, #0
-    BGE res_ok_2_1
-    LDR r2, =num_5
-    VLDR s0, [r2]
-    B res_end_2_1
-res_ok_2_1:
-    LDR r2, =res_array
-    ADD r2, r2, r1, LSL #2
-    VLDR s0, [r2]
-res_end_2_1:
+// -- Comando: Salva em (dez) --
+    LDR r1, =dez_var
+    VSTR s0, [r1]
 
     // Salva o resultado da expressão da linha 2 no res_array
     LDR r1, =res_array
@@ -260,25 +248,13 @@ res_end_2_1:
     LDR r1, =0xFF200020
     STR r0, [r1]
 
-    // Carrega 3
-    LDR r0, =num_6
+    // Carrega 200.0
+    LDR r0, =num_5
     VLDR s0, [r0]
 
-// -- Comando: (N RES) --
-    VCVT.S32.F32 s0, s0
-    VMOV r1, s0
-    LDR r2, =3
-    SUB r1, r2, r1
-    CMP r1, #0
-    BGE res_ok_3_1
-    LDR r2, =num_7
-    VLDR s0, [r2]
-    B res_end_3_1
-res_ok_3_1:
-    LDR r2, =res_array
-    ADD r2, r2, r1, LSL #2
-    VLDR s0, [r2]
-res_end_3_1:
+// -- Comando: Salva em (palhaco) --
+    LDR r1, =palhaco_var
+    VSTR s0, [r1]
 
     // Salva o resultado da expressão da linha 3 no res_array
     LDR r1, =res_array
@@ -348,45 +324,13 @@ res_end_3_1:
     LDR r1, =0xFF200020
     STR r0, [r1]
 
-    // Carrega 2
-    LDR r0, =num_8
-    VLDR s0, [r0]
+// -- Comando: Carrega de (palhaco) --
+    LDR r1, =palhaco_var
+    VLDR s0, [r1]
 
-// -- Comando: (N RES) --
-    VCVT.S32.F32 s0, s0
-    VMOV r1, s0
-    LDR r2, =4
-    SUB r1, r2, r1
-    CMP r1, #0
-    BGE res_ok_4_1
-    LDR r2, =num_9
-    VLDR s0, [r2]
-    B res_end_4_1
-res_ok_4_1:
-    LDR r2, =res_array
-    ADD r2, r2, r1, LSL #2
-    VLDR s0, [r2]
-res_end_4_1:
-
-    // Carrega 1
-    LDR r0, =num_10
-    VLDR s1, [r0]
-
-// -- Comando: (N RES) --
-    VCVT.S32.F32 s1, s1
-    VMOV r1, s1
-    LDR r2, =4
-    SUB r1, r2, r1
-    CMP r1, #0
-    BGE res_ok_4_2
-    LDR r2, =num_11
-    VLDR s1, [r2]
-    B res_end_4_2
-res_ok_4_2:
-    LDR r2, =res_array
-    ADD r2, r2, r1, LSL #2
-    VLDR s1, [r2]
-res_end_4_2:
+// -- Comando: Carrega de (dez) --
+    LDR r1, =dez_var
+    VLDR s1, [r1]
 
 // -- Operação: + --
     VADD.F32 s0, s0, s1
@@ -462,7 +406,9 @@ res_end_4_2:
     BX LR
 
 .data
-mem_var:
+dez_var:
+    .float 0.0
+palhaco_var:
     .float 0.0
 res_array:
     .space 20 // Espaço para 5 resultados float
@@ -475,21 +421,9 @@ num_2:
 num_3:
     .float 1.0
 num_4:
-    .float 1
+    .float 10.0
 num_5:
-    .float 0.0
-num_6:
-    .float 3
-num_7:
-    .float 0.0
-num_8:
-    .float 2
-num_9:
-    .float 0.0
-num_10:
-    .float 1
-num_11:
-    .float 0.0
+    .float 200.0
 
 const_10:
     .float 10.0

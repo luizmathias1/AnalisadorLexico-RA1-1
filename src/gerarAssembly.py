@@ -81,13 +81,29 @@ def mostrarDisplay(instrucoes, reg_esq):
     instrucoes.append(f"    LDR r1, =0xFF200020")
     instrucoes.append(f"    STR r0, [r1]")
 
-def gerarRes(instrucoes, resultado, reg_destino):
-    # Função auxiliar para gerar código que armazena um resultado em um registrador específico
-    label = f"res_{len(instrucoes)}"
-    instrucoes.append(f"\n    // Gerar resultado {resultado} no registrador s{reg_destino}")
-    instrucoes.append(f"    LDR r0, ={label}")
-    instrucoes.append(f"    VLDR s{reg_destino}, [r0]")
-    return label
+def gerarRes(instrucoes, contador_reg, linha_idx, literais):
+    if contador_reg >= 1:
+        reg_top = contador_reg - 1
+        lbl_ok = f"res_ok_{linha_idx}_{contador_reg}"
+        lbl_end = f"res_end_{linha_idx}_{contador_reg}"
+        instrucoes.append(f"\n// -- Comando: (N RES) --")
+        instrucoes.append(f"    VCVT.S32.F32 s{reg_top}, s{reg_top}") # Transforma N em int
+        instrucoes.append(f"    VMOV r1, s{reg_top}")                 # r1 = N
+        instrucoes.append(f"    LDR r2, ={linha_idx}")                # r2 = índice da linha atual
+        instrucoes.append(f"    SUB r1, r2, r1")                      # r1 = linha_atual - N
+        instrucoes.append(f"    CMP r1, #0")                          
+        instrucoes.append(f"    BGE {lbl_ok}")                        # Se índice válido >= 0
+        # Caso inválido, seta para 0.0
+        label_0 = f"num_{len(literais)}"
+        literais.append((label_0, "0.0"))
+        instrucoes.append(f"    LDR r2, ={label_0}")
+        instrucoes.append(f"    VLDR s{reg_top}, [r2]")
+        instrucoes.append(f"    B {lbl_end}")
+        instrucoes.append(f"{lbl_ok}:")
+        instrucoes.append(f"    LDR r2, =res_array")
+        instrucoes.append(f"    ADD r2, r2, r1, LSL #2")              # Endereço: res_array + (idx)*4 (numero de bytes por float)
+        instrucoes.append(f"    VLDR s{reg_top}, [r2]")               # Carrega o resultado anterior
+        instrucoes.append(f"{lbl_end}:")
 
 def gerarAssembly():
     data = ler_json()
@@ -97,6 +113,7 @@ def gerarAssembly():
     adicionarCabecalho(instrucoes)
 
     literais = []
+    memorias=[] # Para variáveis MEM, se necessário
     
     linha_idx = 0
 
@@ -136,14 +153,14 @@ def gerarAssembly():
                         instrucoes.append(f"    VDIV.F32 s{reg_esq}, s{reg_esq}, s{reg_dir}")
                     elif valor == '//':
                         instrucoes.append(f"    VDIV.F32 s{reg_esq}, s{reg_esq}, s{reg_dir}")
-                        instrucoes.append(f"    VCVT.S32.F32 s{reg_esq}, s{reg_esq}") # Trunca para int
+                        instrucoes.append(f"    VCVT.S32.F32 s{reg_esq}, s{reg_esq}") # Transforma em int
                         instrucoes.append(f"    VCVT.F32.S32 s{reg_esq}, s{reg_esq}") # Volta para float
                     elif valor == '%':
                         # Modulo Float: A - (int(A / B) * B)
                         s_tmp = contador_reg
                         instrucoes.append(f"    VDIV.F32 s{s_tmp}, s{reg_esq}, s{reg_dir}")
-                        instrucoes.append(f"    VCVT.S32.F32 s{s_tmp}, s{s_tmp}") # Trunca para int
-                        instrucoes.append(f"    VCVT.F32.S32 s{s_tmp}, s{s_tmp}") # Volta para float
+                        instrucoes.append(f"    VCVT.S32.F32 s{s_tmp}, s{s_tmp}") # Transforma em int
+                        instrucoes.append(f"    VCVT.F32.S32 s{s_tmp}, s{s_tmp}") # VOlta pra float
                         instrucoes.append(f"    VMUL.F32 s{s_tmp}, s{s_tmp}, s{reg_dir}")
                         instrucoes.append(f"    VSUB.F32 s{reg_esq}, s{reg_esq}, s{s_tmp}")
                     elif valor == '^':
@@ -174,46 +191,25 @@ def gerarAssembly():
                 pass
                 
             elif tipo == 'command':
-                if valor == 'MEM':
+                if valor == 'RES': 
+                    gerarRes(instrucoes, contador_reg, linha_idx, literais)
+                else :
                     if ultimo_token_numero and contador_reg >= 1:
                         # Se houver um número antes, armazenamos em MEM
                         reg_top = contador_reg - 1
-                        instrucoes.append(f"\n    // Comando: Salva em MEM")
-                        instrucoes.append(f"    LDR r1, =mem_var")
+                        if(f'{valor}_var' not in memorias): memorias.append(f"{valor}_var")
+                        instrucoes.append(f"\n// -- Comando: Salva em ({valor}) --")
+                        instrucoes.append(f"    LDR r1, ={valor}_var")
                         instrucoes.append(f"    VSTR s{reg_top}, [r1]")
-                        ultimo_token_numero = False
                     else:
-                        # Caso contrário, carrega de MEM (se não foi inicializada, inicialmente é 0.0)
-                        instrucoes.append(f"\n    // Comando: Carrega de MEM")
-                        instrucoes.append(f"    LDR r1, =mem_var")
+                        # Caso contrário, carrega valor (se não foi inicializada, inicialmente é 0.0)
+                        if(f'{valor}_var' not in memorias): memorias.append(f"{valor}_var")
+                        instrucoes.append(f"\n// -- Comando: Carrega de ({valor}) --")
+                        instrucoes.append(f"    LDR r1, ={valor}_var")
                         instrucoes.append(f"    VLDR s{contador_reg}, [r1]")
                         contador_reg += 1
-                        ultimo_token_numero = False
-                        
-                elif valor == 'RES':
-                    if contador_reg >= 1:
-                        reg_top = contador_reg - 1
-                        lbl_ok = f"res_ok_{linha_idx}_{contador_reg}"
-                        lbl_end = f"res_end_{linha_idx}_{contador_reg}"
-                        instrucoes.append(f"\n// -- Comando: (N RES) --")
-                        instrucoes.append(f"    VCVT.S32.F32 s{reg_top}, s{reg_top}") # Transforma N em int
-                        instrucoes.append(f"    VMOV r1, s{reg_top}")                 # r1 = N
-                        instrucoes.append(f"    LDR r2, ={linha_idx}")                # r2 = índice da linha atual
-                        instrucoes.append(f"    SUB r1, r2, r1")                      # r1 = linha_atual - N
-                        instrucoes.append(f"    CMP r1, #0")                          
-                        instrucoes.append(f"    BGE {lbl_ok}")                        # Se índice válido >= 0
-                        # Caso inválido, seta para 0.0
-                        label_0 = f"num_{len(literais)}"
-                        literais.append((label_0, "0.0"))
-                        instrucoes.append(f"    LDR r2, ={label_0}")
-                        instrucoes.append(f"    VLDR s{reg_top}, [r2]")
-                        instrucoes.append(f"    B {lbl_end}")
-                        instrucoes.append(f"{lbl_ok}:")
-                        instrucoes.append(f"    LDR r2, =res_array")
-                        instrucoes.append(f"    ADD r2, r2, r1, LSL #2")              # Endereço: res_array + (idx)*4 (numero de bytes por float)
-                        instrucoes.append(f"    VLDR s{reg_top}, [r2]")               # Carrega o resultado anterior
-                        instrucoes.append(f"{lbl_end}:")
-                        ultimo_token_numero = False
+
+                ultimo_token_numero = False
 
         # Ao final de cada linha, o resultado final na pilha fica salvo no res_array (posição s0)
         if contador_reg > 0:
@@ -235,8 +231,9 @@ def gerarAssembly():
     instrucoes.append("\n.data")
     
     # Variável MEM inicializada com 0.0
-    instrucoes.append("mem_var:")
-    instrucoes.append("    .float 0.0")
+    for mem in memorias:
+        instrucoes.append(f"{mem}:")
+        instrucoes.append("    .float 0.0")
 
     # Array de resultados das expressões
     instrucoes.append("res_array:")
