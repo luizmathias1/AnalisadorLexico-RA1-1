@@ -5,13 +5,14 @@
 #Luiz Mathias 
 #Rafaela Vecchi 
  
-# #Grupo RA1 1
+#Grupo RA1 1
 
 import sys
 import parseExpressao
 import executarExpressao
 import exibirResultados
-from utils import lerArquivo, resetJson
+import gerarAssembly
+from utils import lerArquivo, resetFiles
 
 def main(argv=None):
     argv = argv if argv is not None else sys.argv
@@ -38,6 +39,7 @@ def main(argv=None):
     
     resultados = executarExpressao.executarExpressao()
     exibirResultados.exibirResultados(resultados) 
+    gerarAssembly.gerarAssembly()
 
 if __name__ == "__main__":
     resetFiles() # Garantir que sempre começamos com arquivos vazios

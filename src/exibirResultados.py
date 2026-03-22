@@ -18,7 +18,6 @@ CORES_PARENTESES = [
     "\033[32m",  # Verde
 ]
 
-
 def formatarResultado(res):
     if res != res:  # NaN check (IEEE 754)
         return "NaN"
@@ -29,11 +28,9 @@ def formatarResultado(res):
     else:
         return f"{res:.1f}"
 
-
 def formatarIEEE754(res):
     bytes_ieee = struct.pack('>d', res)
     return bytes_ieee.hex().upper()
-
 
 def colorirExpressao(expressao, tokens):
     cores_pos = {}
@@ -81,7 +78,6 @@ def colorirExpressao(expressao, tokens):
         resultado.append(RESET)
 
     return "".join(resultado)
-
 
 def exibirResultados(resultados):
     if not resultados:

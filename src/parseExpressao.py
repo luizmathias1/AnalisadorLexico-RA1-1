@@ -116,7 +116,7 @@ def estadoNumero(char, lista, tokens, linha, index):    # Enquanto recebemos num
     return estadoInicial(char, "", tokens, linha, index)
 
 def estadoComando(char, lista, tokens, linha, index):
-    if lista.isalpha():
+    if lista.isalpha() and lista.isupper():
         # Enquanto letra, continua recursivamente
         if char.isalpha():
             return estadoComando, lista + char
