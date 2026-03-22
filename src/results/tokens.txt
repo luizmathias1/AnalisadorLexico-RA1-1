@@ -1,41 +1,8 @@
 {
   "entries": [
     {
-      "line_number": 1,
-      "line": "(4.0 2.0 +)",
-      "tokens": [
-        {
-          "token": "(",
-          "type": "parenthesis",
-          "position": 0
-        },
-        {
-          "token": "4.0",
-          "type": "number",
-          "position": 1
-        },
-        {
-          "token": "2.0",
-          "type": "number",
-          "position": 5
-        },
-        {
-          "token": "+",
-          "type": "operator",
-          "position": 9
-        },
-        {
-          "token": ")",
-          "type": "parenthesis",
-          "position": 10
-        }
-      ],
-      "resultado": 6.0,
-      "memoria": ""
-    },
-    {
       "line_number": 2,
-      "line": "(1.0 1.0 +)",
+      "line": "(20.0 MEMCORRETO)",
       "tokens": [
         {
           "token": "(",
@@ -43,117 +10,23 @@
           "position": 0
         },
         {
-          "token": "1.0",
+          "token": "20.0",
           "type": "number",
           "position": 1
         },
         {
-          "token": "1.0",
-          "type": "number",
-          "position": 5
-        },
-        {
-          "token": "+",
-          "type": "operator",
-          "position": 9
-        },
-        {
-          "token": ")",
-          "type": "parenthesis",
-          "position": 10
-        }
-      ],
-      "resultado": 2.0,
-      "memoria": ""
-    },
-    {
-      "line_number": 3,
-      "line": "(10.0 dez)",
-      "tokens": [
-        {
-          "token": "(",
-          "type": "parenthesis",
-          "position": 0
-        },
-        {
-          "token": "10.0",
-          "type": "number",
-          "position": 1
-        },
-        {
-          "token": "dez",
+          "token": "MEMCORRETO",
           "type": "command",
           "position": 6
         },
         {
           "token": ")",
           "type": "parenthesis",
-          "position": 9
+          "position": 16
         }
       ],
-      "resultado": 10.0,
-      "memoria": "dez"
-    },
-    {
-      "line_number": 4,
-      "line": "(200.0 palhaco)",
-      "tokens": [
-        {
-          "token": "(",
-          "type": "parenthesis",
-          "position": 0
-        },
-        {
-          "token": "200.0",
-          "type": "number",
-          "position": 1
-        },
-        {
-          "token": "palhaco",
-          "type": "command",
-          "position": 7
-        },
-        {
-          "token": ")",
-          "type": "parenthesis",
-          "position": 14
-        }
-      ],
-      "resultado": 200.0,
-      "memoria": "palhaco"
-    },
-    {
-      "line_number": 5,
-      "line": "(palhaco dez +)",
-      "tokens": [
-        {
-          "token": "(",
-          "type": "parenthesis",
-          "position": 0
-        },
-        {
-          "token": "palhaco",
-          "type": "command",
-          "position": 1
-        },
-        {
-          "token": "dez",
-          "type": "command",
-          "position": 9
-        },
-        {
-          "token": "+",
-          "type": "operator",
-          "position": 13
-        },
-        {
-          "token": ")",
-          "type": "parenthesis",
-          "position": 14
-        }
-      ],
-      "resultado": 210.0,
-      "memoria": ""
+      "resultado": 20.0,
+      "memoria": "MEMCORRETO"
     }
   ]
 }

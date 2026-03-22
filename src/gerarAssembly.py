@@ -194,7 +194,7 @@ def gerarAssembly():
                 if valor == 'RES': 
                     gerarRes(instrucoes, contador_reg, linha_idx, literais)
                 else :
-                    var_label = f"{var_label}"
+                    var_label = f"{valor}_var"
                     if(f'{var_label}' not in memorias): memorias.append(var_label)
                     if ultimo_token_numero and contador_reg >= 1:
                         # Se houver um número antes, armazenamos em MEM
