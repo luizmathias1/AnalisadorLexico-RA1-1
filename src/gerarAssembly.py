@@ -22,8 +22,8 @@ def adicionarCabecalho(instrucoes):
 def mostrarDisplay(instrucoes, reg_esq):
     instrucoes.append(f"\n// -- Mostrar resultado no display --")
     instrucoes.append(f"\n    // Converte float para inteiro")
-    instrucoes.append(f"    VCVTR.S32.F32 s{reg_esq}, s{reg_esq}")
-    instrucoes.append(f"    VMOV r0, s{reg_esq}")
+    instrucoes.append(f"    VCVTR.S32.F32 s19, s{reg_esq}")
+    instrucoes.append(f"    VMOV r0, s19")
 
     instrucoes.append(f"\n    // Extrai dígitos via VFP")
     instrucoes.append(f"    VMOV s20, r0")
@@ -80,6 +80,30 @@ def mostrarDisplay(instrucoes, reg_esq):
     instrucoes.append(f"\n    // Escreve nos displays")
     instrucoes.append(f"    LDR r1, =0xFF200020")
     instrucoes.append(f"    STR r0, [r1]")
+
+def mostrarBinario(instrucoes, reg_esq, sufixo_label):
+    instrucoes.append(f"\n// -- Mostrar resultado em binário (pisca MSB/LSB do double) --")
+    instrucoes.append(f"    VCVT.F64.F32 d1, s{reg_esq}")
+    instrucoes.append(f"    VMOV r4, r5, d1")
+
+    instrucoes.append(f"\n    // Pisca 1: upper 32 bits (MSB)")
+    instrucoes.append(f"    LDR r1, =0xFF200000")
+    instrucoes.append(f"    STR r5, [r1]")
+
+    instrucoes.append(f"\n    // Apaga")
+    instrucoes.append(f"    MOV r0, #0")
+    instrucoes.append(f"    LDR r1, =0xFF200000")
+    instrucoes.append(f"    STR r0, [r1]")
+
+    instrucoes.append(f"\n    // Pisca 2: lower 32 bits (LSB)")
+    instrucoes.append(f"    LDR r1, =0xFF200000")
+    instrucoes.append(f"    STR r4, [r1]")
+
+    instrucoes.append(f"\n    // Apaga")
+    instrucoes.append(f"    MOV r0, #0")
+    instrucoes.append(f"    LDR r1, =0xFF200000")
+    instrucoes.append(f"    STR r0, [r1]")
+
 
 def gerarRes(instrucoes, contador_reg, linha_idx, literais):
     if contador_reg >= 1:
@@ -221,6 +245,7 @@ def gerarAssembly():
 
             # Mostra no display o topo da pilha (s0)
             mostrarDisplay(instrucoes, 0)
+            mostrarBinario(instrucoes, 0, linha_idx)
             
         linha_idx += 1
 
