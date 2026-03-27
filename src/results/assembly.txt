@@ -753,6 +753,8 @@ num_36:
     .float 3.0
 num_37:
     .float 1.0
+num_31:
+    .float 2.0
 
 const_10:
     .float 10.0
